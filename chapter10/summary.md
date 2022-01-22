@@ -16,11 +16,11 @@
 - 클래스를 정의하는 표준 자바 관례
 
 1. static public
-1.static private
-1. private 인스턴스 변수
-1. ~~public 변수~~
-1. 공개 함수
-1. 비공개 함수(자신을 호출하는 공개 함수 직후)
+2. static private
+3. private 인스턴스 변수
+4. ~~public 변수~~
+5. 공개 함수
+6. 비공개 함수(자신을 호출하는 공개 함수 직후)
 
 - 즉, 추상화 단계가 순차적으로 내려간다. 그래서 프로그램은 신문기사처럼 읽힌다.
 
@@ -42,11 +42,11 @@
 
 ```java
 public class SuperDashboard extends JFrame implements MetaDataUser {
-   public Component getLastFocusedComponent()
-   public void setLastFocused(Component lastFocused)
-   public int getMajorVersionNumber()
-   public int getMinorVersionNumber()
-   public int getBuildNumber()
+   public Component getLastFocusedComponent();
+   public void setLastFocused(Component lastFocused);
+   public int getMajorVersionNumber();
+   public int getMinorVersionNumber();
+   public int getBuildNumber();
 }
 ```
 
@@ -57,9 +57,9 @@ public class SuperDashboard extends JFrame implements MetaDataUser {
 
 ```java
 public class Version {
-    public int getMajorVersionNumber() 
-    public int getMinorVersionNumber() 
-    public int getBuildNumber()
+    public int getMajorVersionNumber();
+    public int getMinorVersionNumber(); 
+    public int getBuildNumber();
 }
 ```
 
@@ -118,17 +118,17 @@ public class Stack {
 
 ```java
 public class Sql {
-    public Sql(String table, Column[] columns)
-    public String create()
-    public String insert(Object[] fields)
-    public String selectAll()
-    public String findByKey(String keyColumn, String keyValue)
-    public String select(Column column, String pattern)
-    public String select(Criteria criteria)
-    public String preparedInsert()
-    private String columnList(Column[] columns)
-    private String valuesList(Object[] fields, final Column[] columns) private String selectWithCriteria(String criteria)
-    private String placeholderList(Column[] columns)
+    public Sql(String table, Column[] columns);
+    public String create();
+    public String insert(Object[] fields);
+    public String selectAll();
+    public String findByKey(String keyColumn, String keyValue);
+    public String select(Column column, String pattern);
+    public String select(Criteria criteria);
+    public String preparedInsert();
+    private String columnList(Column[] columns);
+    private String valuesList(Object[] fields, final Column[] columns) private String selectWithCriteria(String criteria);
+    private String placeholderList(Column[] columns);
 }
 ```
 
@@ -138,53 +138,54 @@ public class Sql {
 
 ```java
 abstract public class Sql {
-    public Sql(String table, Column[] columns) 
+    public Sql(String table, Column[] columns);
     abstract public String generate();
 }
 public class CreateSql extends Sql {
-    public CreateSql(String table, Column[] columns) 
-    @Override public String generate()
+    public CreateSql(String table, Column[] columns);
+    @Override public String generate();
 }
 
 public class SelectSql extends Sql {
-    public SelectSql(String table, Column[] columns) 
-    @Override public String generate()
+    public SelectSql(String table, Column[] columns); 
+    @Override public String generate();
 }
 
 public class InsertSql extends Sql {
-    public InsertSql(String table, Column[] columns, Object[] fields) 
-    @Override public String generate()
-    private String valuesList(Object[] fields, final Column[] columns)
+    public InsertSql(String table, Column[] columns, Object[] fields); 
+    @Override public String generate();
+    private String valuesList(Object[] fields, final Column[] columns);
 }
 
 public class SelectWithCriteriaSql extends Sql { 
-    public SelectWithCriteriaSql(
-    String table, Column[] columns, Criteria criteria) 
-    @Override public String generate()
+    public SelectWithCriteriaSql(String table, Column[] columns, Criteria criteria); 
+    @Override public String generate();
 }
 
 public class SelectWithMatchSql extends Sql { 
     public SelectWithMatchSql(String table, Column[] columns, Column column, String pattern) 
-    @Override public String generate()
+    @Override public String generate();
 }
 
-public class FindByKeySql extends Sql public FindByKeySql(
-    String table, Column[] columns, String keyColumn, String keyValue) 
-    @Override public String generate()
+public class FindByKeySql extends Sql {
+    public FindByKeySql(String table, Column[] columns, String keyColumn, String keyValue);
+    @Override public String generate();
 }
 
 public class PreparedInsertSql extends Sql {
-    public PreparedInsertSql(String table, Column[] columns) 
-    @Override public String generate() {
-    private String placeholderList(Column[] columns)
+    public PreparedInsertSql(String table, Column[] columns); 
+    @Override public String generate();
+    private String placeholderList(Column[] columns);
 }
 
 public class Where {
-    public Where(String criteria) public String generate()
+    public Where(String criteria); 
+    public String generate();
 }
 
 public class ColumnList {
-    public ColumnList(Column[] columns) public String generate()
+    public ColumnList(Column[] columns);
+    public String generate();
 }
 ```
 
@@ -200,11 +201,11 @@ public class ColumnList {
 - 상세 구현에 의존하는 클라이언트 클래스는 구현이 바뀌면 위험에 빠지므로 인터페이스, 추상 클래스로 구현에 미치는 영향을 격리한다.
 
 ```java
-public interfae StocckExchange {
+public interface StockExchange {
     Money currentPrice(String symbol);
 }
  
-public Portfolio {
+public class Portfolio {
     private StockExchange exchange;
     public Portfolio(StockExchange exchange) {
         this.exchange = exchange; 
@@ -232,6 +233,6 @@ public class PortfolioTest {
 ```
 
 - Portfolio는 구체적인 클래스가 아니라 StockExchange 인터페이스에 의존한다.
-- StockExchange 인터페이슨 주식 기호를 받아 현재 주식 가격으로 반환한다는 추상적인 개념을 표현
+- StockExchange 인터페이스는 주식 기호를 받아 현재 주식 가격으로 반환한다는 추상적인 개념을 표현
 - 이와 같은 추상화로 실제로 주가를 얻어오는 출처나 얻어오는 방식 등과 같은 구체적인 사실을 숨김
 - 결합도를 최소로 줄이면서 자연스럽게 DIP를 따르는 클래스가 나오게 된다.
