@@ -169,7 +169,7 @@ final String outputDir = scratchDir.getAbsolutePath();
 
 ### 잡종 구조
 - 이런 혼란으로 말미암아 때때로 절반은 객체, 절반은 자료 구조인 잡종 구조가 나온다.
-- 잡종 구조는 중요한 기능을 수행하는 함수도 잇고, 공개 변수나 공개 조회/설정 함수도 있다.
+- 잡종 구조는 중요한 기능을 수행하는 함수도 있고, 공개 변수나 공개 조회/설정 함수도 있다.
 - 이런 구조는 새로운 함수는 물론이고 새로운 자료 구조도 추가하기 어렵다.
 - 양쪽 세상에서 단점만 모아놓은 구조로, 잡종 구조는 되도록 피하는 편이 좋다.
 
@@ -181,7 +181,7 @@ String outFile = outputDir + "/" + className.replace('.', '/') + ".class";
 FileOutputStream fout = new FileOutputStream(outFile); 
 BufferedOutputStream bos = new BufferedOutputStream(fout);
 ```
-- 추상화 수준을 뒤썩어 놓아 다소 불편하다.
+- 추상화 수준을 뒤섞어 놓아 다소 불편하다.
 - 위 코드를 보면, 임시 디렉터리의 절대 경로를 얻으려는 이유가 임시 파일을 생성하기 위한 목적이라는 사실을 알 수 있다.
 - 그렇다면 `ctxt` 객체에 임시 파일을 생성하라고 시키면 어떨까?
 
@@ -193,7 +193,7 @@ BufferedOutputStream bos = ctxt.createScratchFileStream(classFileName);
 - 따라서 디미터 법칙을 위반하지 않는다.
 
 ## 자료 전달 객체 p126
-- 자료 구조체의 전형적인 형태는 공개 변수만 이쏙 함수가 없는 크래스다.
+- 자료 구조체의 전형적인 형태는 공개 변수만 있고 함수가 없는 클래스다.
 - 이런 자료 구조체를 때로는 자료 전달 객체(Data Transfer Object, DTO)라 한다.
 
 ```java
@@ -211,7 +211,7 @@ public class Address {
 
 ### 활성 레코드
 - DTO의 특수한 형태다.
-- 공개 변수가 있거나 비공개 변수에 조회설정 함수가 있는 자료 구조지만, 대개 sava나 find와 같은 탐색 함수도 제공한다.
+- 공개 변수가 있거나 비공개 변수에 조회설정 함수가 있는 자료 구조지만, 대개 save나 find와 같은 탐색 함수도 제공한다.
 - 활성 레코드는 데이터베이스 테이블 이나 다른 소스에서 자료를 직접 변환한 결과다.
 
 <br>
