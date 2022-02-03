@@ -33,6 +33,8 @@
    1. [메소드 이름 변경](#2-29)
    1. [반환 타입 변경](#2-30)
    1. [의존 관계](#2-31)
+   1. [isInRange 리팩토링](#2-32)
+1. [결론](#3)
 
 
 - JCommon 라이브러리를 내에 org.jfree.date라는 패키지 속에 SerialDate라는 클래스를 탐험한다.
@@ -652,4 +654,77 @@ public DayDate getEndOfMonth() {
 ### <a name = '2-31'> 의존 관계
 
 - p.467 844행 ~ 846행
-- SpreadsheetDate에서 구현한 toDate를 살펴보면 메소드는 SpreadsheetDate에 의존하지 않는다. (p.499 198행 ~ 207행)
+- SpreadsheetDate에서 구현한 toDate를 살펴보면 메소드는 SpreadsheetDate에 의존하지 않기에 DayDate로 끌어올린다. (p.499 198행 ~ 207행)
+- getDayOfWeek 메소드도 SpreadsheetDate 구현에 의존하지 않으므로 DayDate로 올려도 될 것 같다. 그럴까? (p.500 246행)
+- 구현 알고리즘을 보게 되면 서수 날짜 시작일의 요일에 암시적으로 의존한다. 즉 0번째 날짜의 요일에 의존하기에 해당 메소드는 DayDate로 옮길 수 없다. 논리적 의존성이 존재하기 때문이다.
+- 그렇기에 DayDate에 getDayOfWeekForOrdinalZero라는 추상 메소드를 구현하고 SpreadsheetDate에서 Day.SATURDAY를 반환하도록 구현하였다.
+- 그런 다음 getDayOfWeek 메소드를 DayDate로 옮긴 후 getOrdinalDay와 getDayOfWeekForOrdinalZero를 호출하도록 변경하였다.
+
+```java
+public int getDayOfWeek() {
+    return (this.serial + 6) % 7 + 1;
+}
+
+public Day getDayOfWeek() {
+    Day startingDay = getDayOfWeekForOrdinalZero(); // 물리적 의존성
+    int startingOffset = startingDay.index - Day.SUNDAY.index;
+    return Day.make((getOrdinalDay() + startingOffset) % 7 + 1);
+}
+```
+
+- compare 메소드 또한 추상 메소드일 필요가 없다 (p.469 902행 ~ 913행)
+- SpreadsheetDate에 있는 compare 메소드를 DayDate로 끌어올렸다.
+- 그리고 이름도 불분명하다. 오늘 날짜와 차이를 일수로 반환하기에 이름을 daysSince로 변경하였고 테스트 케이스도 없어 추가하였다.
+- p.469 915행 ~ p.470 980행까지 총 여섯 메소드는 모두 DayDate에서 구현해야 마땅한 추상 메소드이기에 SpreadsheetDate에서 DayDate로 끌어올렸다.
+
+### <a name = '2-32'> isInRange 리팩토링
+
+- p.470 982행 ~ p.471 995행, p.504 386행 ~ 419행
+- if문 연쇄가 다소 번거롭게 보여 DateInterval enum으로 옮겨 if문 연쇄를 완전히 없앴다.
+ 
+```java
+public enum DateInterval {
+    OPEN {
+        public boolean isIn(int d, int left, int right) {
+            return d > left && d < right;
+        }
+    },
+    CLOSED_LEFT {
+        public boolean isIn(int d, int left, int right) {
+            return d >= left && d < right;
+        }
+    },
+    CLOSED_RIGHT {
+        public boolean isIn(int d, int left, int right) {
+            return d > left && d <= right;
+        }
+    },
+    CLOSED {
+        public boolean isIn(int d, int left, int right) {
+            return d >= left && d <= right;
+        }
+    };
+
+    public abstract boolean isIn(int d, int left, int right);
+}
+
+public boolean isInRange(DayDate di, DayDate d2, DateInterval interval) {
+    int left = Math.min(d1.getOrdinalDay(), d2.getOrdinalDay());
+    int right = Math.max(d1.getOrdinalDay(), d2.getOrdinalDay());
+    return interval.isIn(getOrdinalDay(), left, right);
+}
+```
+
+## <a name = '3'> 결론 p.365
+
+- 지금까지 한 작업을 정리한다면
+
+1. 처음 나오는 주석은 너무 오래되어 간단하게 고치고 개선하였다.
+1. enum을 모두 독자적인 소스 파일로 옮겼다.
+1. 정적 변수(dateFormatSymbols)와 정적 메소드(getMonthNames, isLeapYear, lastDayOfMonth)를 DateUtil이라는 새 클래스로 옮겼다.
+1. 일부 추상 메소드를 DayDate 클래스로 끌어올렸다.
+1. Month.make를 Month.fromInt로 변경하였고 다른 enum도 똑같이 변경하였다. 또한 모든 enum에 toInt() 접근자를 생성하고 index필드를 private으로 정의하였다.
+1. plusYear, plusMonths에 중복이 있었고 correctLastDayOfMonth라는 새 메소드를 생성해 중복을 없앴다.
+1. 여기저기 사용하던 숫자 1을 없앴고 모두 Month.JANUARY.toInt() 혹은 Day.SUNDAY.toInt()로 적절히 변경했다. SpreadsheetDate 코드의 알고리즘을 변경하였다.
+
+- 우리는 보이스카우트 규칙을 따랐고 테스트 커버리지를 증가시키고, 버그 몇 개를 고쳤으며, 코드 크기를 줄이고, 코드가 명확해졌다.
