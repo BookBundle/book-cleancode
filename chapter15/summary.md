@@ -20,7 +20,7 @@
 ## JUnit 프레임워크 p.324
 
 - 살펴볼 예제는 ComparisonCompactor라는 모듈이다.
-- ABCDE와 ABXDE를 받으면 <...B[X]D>를 반환한다.
+- ABCDE와 ABXDE를 받으면 <...B[X]D..>를 반환한다.
 
 ### ComparisonCompactor 모듈에 대한 테스트 케이스
 
