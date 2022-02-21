@@ -1,28 +1,28 @@
 # 15장. JUnit 들여다보기 p.324
 
-1. [JUnit 프레임워크](#JUnit-프레임워크-p.324)
-   1. [ComparisonCompactor 모듈에 대한 테스트 케이스](#ComparisonCompactor-모듈에-대한-테스트-케이스)
-   1. [ComparisonCompactor 모듈](#ComparisonCompactor-모듈)
-   1. [개선하는 방법](#개선하는-방법)
-      1. [인코딩을 피해라](#인코딩을-피해라)
-      1. [조건문 캡슐화](#조건문-캡슐화)
-      1. [이름을 명확하게 붙여라](#이름을-명확하게-붙여라)
-      1. [부정문보다는 긍정문으로 표현해라](#부정문보다는-긍정문으로-표현해라)
-      1. [이름으로 부수 효과를 표현해라](#이름으로-부수-효과를-표현해라)
-      1. [함수는 한 가지만 실행해야 한다](#함수는-한-가지만-실행해야-한다)
-      1. [일관성을 맞춰라](#일관성을-맞춰라)
-      1. [서술적인 이름을 사용해라](#서술적인-이름을-사용해라)
-      1. [숨겨진 시간적인 결합](#숨겨진-시간적인-결합)
-      1. [경계 조건을 캡슐화하라](#경계-조건을-캡슐화하라)
-1. [최종 코드](#최종-코드-p.338)
-1. [결론](#결론-p.341)
+1. [JUnit 프레임워크](#1)
+   1. [ComparisonCompactor 모듈에 대한 테스트 케이스](#1-1)
+   1. [ComparisonCompactor 모듈](#1-2)
+   1. [개선하는 방법](#1-3)
+      1. [인코딩을 피해라](#1-3-1)
+      1. [조건문 캡슐화](#1-3-2)
+      1. [이름을 명확하게 붙여라](#1-3-3)
+      1. [부정문보다는 긍정문으로 표현해라](#1-3-4)
+      1. [이름으로 부수 효과를 표현해라](#1-3-5)
+      1. [함수는 한 가지만 실행해야 한다](#1-3-6)
+      1. [일관성을 맞춰라](#1-3-7)
+      1. [서술적인 이름을 사용해라](#1-3-8)
+      1. [숨겨진 시간적인 결합](#1-3-9)
+      1. [경계 조건을 캡슐화하라](#1-3-10)
+1. [최종 코드](#2)
+1. [결론](#3)
 
-## JUnit 프레임워크 p.324
+## <a name = '1'> JUnit 프레임워크 p.324 </a>
 
 - 살펴볼 예제는 ComparisonCompactor라는 모듈이다.
 - ABCDE와 ABXDE를 받으면 <...B[X]D..>를 반환한다.
 
-### ComparisonCompactor 모듈에 대한 테스트 케이스
+### <a name = '1-1'> ComparisonCompactor 모듈에 대한 테스트 케이스 </a>
 
 - 이 모듈에 대한 테스트 케이스는 코드 커버리지 분석이 100%가 나온다.
 - 테스트 케이스가 모든 행, 모든 if문, 모든 for 문을 실행한다는 의미이다.
@@ -132,7 +132,7 @@ public class ComparisonCompactorTest extends TestCase {
 }
 ```
 
-### ComparisonCompactor 모듈
+### <a name = '1-2'> ComparisonCompactor 모듈 </a>
 
 - 코드가 잘 분리되었고, 표현력이 적절하며, 구조가 단순하다.
 
@@ -220,9 +220,9 @@ public class ComparisonCompactor {
 >
 > 처음 왔을 때보다 더 깨끗하게 해놓고 떠나야 한다.
 
-### 개선하는 방법
+### <a name = '1-3'> 개선하는 방법 </a>
 
-#### 인코딩을 피해라
+#### <a name = '1-3-1'> 인코딩을 피해라 </a>
 
 - 가장 먼저 거슬리는 부분은 멤버 변수 앞에 붙은 접두사 f다.
 - 오늘날 사용하는 개발 환경에서는 이처럼 변수 이름에 범위를 명시할 필요가 없기에 모두 제거한다.
@@ -235,7 +235,7 @@ private int prefix;
 private int suffix;​
 ```
 
-#### 조건문 캡슐화
+#### <a name = '1-3-2'> 조건문 캡슐화 </a>
 
 - compact 함수 시작부에 캡슐화되지 않은 조건문이 보인다.
 
@@ -274,7 +274,7 @@ private boolean shouldNotCompact() {
 }
 ```
 
-#### 이름을 명확하게 붙여라
+#### <a name = '1-3-3'> 이름을 명확하게 붙여라 </a>
 
 - compact 함수에 이미 expected 변수 이름이 있기에 this.expected와 this.actual도 눈에 거슬린다.
 - f 접두사를 빼버리는 바람에 생긴 결과이고 다음과 같이 의미를 명확하게 바꿔주는 것이 좋다.
@@ -284,7 +284,7 @@ String compactExpected = compactString(expected);
 String compactActual = compactString(actual);
 ```
 
-#### 부정문보다는 긍정문으로 표현해라
+#### <a name = '1-3-4'> 부정문보다는 긍정문으로 표현해라 </a>
 
 - 부정문은 긍정문보다 이해하기 약간 더 어렵다.
 
@@ -310,7 +310,7 @@ private boolean canBeCompacted() {
 }
 ```
 
-#### 이름으로 부수 효과를 표현해라
+#### <a name = '1-3-5'> 이름으로 부수 효과를 표현해라 </a>
 
 - 문자열을 압축하는 함수라지만 실제 canBeCompacted가 false이면 압축하지 않는다.
 - 오류 점검이라는 부가 단계가 숨겨지고 해당 함수는 압축된 문자열이 아닌 형식이 갖춰진 문자열을 반환한다.
@@ -321,7 +321,7 @@ private boolean canBeCompacted() {
 public String formatCompactedComparison(String message) { ... }
 ```
 
-#### 함수는 한 가지만 실행해야 한다
+#### <a name = '1-3-6'> 함수는 한 가지만 실행해야 한다 </a>
 
 - formatCompactedComparison은 형식을 맞추는 작업을 전적으로 맡게 한다.
 - 압축하는 작업은 compactExpectedAndActual이라는 메소드로 분리하여 구현한다.
@@ -351,7 +351,7 @@ private compactExpectedAndActual() {
 }
 ```
 
-#### 일관성을 맞춰라
+#### <a name = '1-3-7'> 일관성을 맞춰라 </a>
 
 - 위에서 compactExpected와 compactActual이 멤버 변수로 승격했다는 사실을 주의해야 한다.
 - 새로 만들어진 함수 끝에서 두 줄은 변수를 반환하지만, 앞에서 두 줄은 반환하지 않는다.
@@ -390,7 +390,7 @@ private int findCommonSuffix() {
 }
 ```
 
-#### 서술적인 이름을 사용해라
+#### <a name = '1-3-8'> 서술적인 이름을 사용해라 </a>
 
 - prefix, suffix는 색인 위치를 나타내기 때문에 뒤에 index를 붙여주었다.
 
@@ -405,7 +405,7 @@ suffixIndex
 ...
 ```
 
-#### 숨겨진 시간적인 결합
+#### <a name = '1-3-9'> 숨겨진 시간적인 결합 </a>
 
 - findCommonSuffix는 숨겨진 시간적인 결합이 존재한다.
 - findCommonSuffix는 findCommonPrefix가 prefix를 계산한다는 사실에 의존한다.
@@ -490,7 +490,7 @@ private boolean suffixOverlapsPrefix(int suffixLength) {
 }
 ```
 
-#### 경계 조건을 캡슐화하라
+#### <a name = '1-3-10'> 경계 조건을 캡슐화하라 </a>
 
 - 코드를 고치고 나니 suffixIndex가 실제로는 접미사 길이라는 사실이 드러난다. 이 말은 이름이 적절치 않다는 것이다.
 - length와 index는 동의어이다. 하지만 length가 더 타당하다.
@@ -573,7 +573,7 @@ private String compactString(String source) {
 }
 ```
 
-## 최종 코드 p.338
+## <a name = '2'> 최종 코드 p.338 </a>
 
 - 코드가 깔끔해졌다. 모듈은 일련의 분석 함수와 일련의 조합 함수로 나뉜다.
 - 전체 함수는 위상적으로 정렬했으므로 각 함수가 사용된 직후에 정의된다.
@@ -684,7 +684,7 @@ public class ComparisonCompactor {
 }
 ```
 
-## 결론 p.341
+## <a name = '3'> 결론 p.341 </a>
 
 - 모듈은 처음보다 깨끗해졌고 우리는 보이스카우트 규칙도 지켰다.
 - 원래 깨끗하지 못했다는 말은 아니다. 하지만 세상에 개선이 불필요한 모듈은 없다.
